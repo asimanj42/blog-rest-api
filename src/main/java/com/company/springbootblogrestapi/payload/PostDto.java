@@ -1,6 +1,5 @@
-package com.company.springbootblogrestapi.dto;
+package com.company.springbootblogrestapi.payload;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
