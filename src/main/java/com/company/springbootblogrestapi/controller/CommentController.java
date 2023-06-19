@@ -2,6 +2,7 @@ package com.company.springbootblogrestapi.controller;
 
 import com.company.springbootblogrestapi.payload.CommentDto;
 import com.company.springbootblogrestapi.service.CommentService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,6 @@ public class CommentController {
 
     private final CommentService commentService;
 
-
-    @PostMapping("/post/{postId}/comments")
-    public ResponseEntity<CommentDto> createComment(@PathVariable("postId") long postId, @RequestBody CommentDto commentDto) {
-        return new ResponseEntity<>(commentService.createComment(postId, commentDto), HttpStatus.CREATED);
-    }
-
-
     @GetMapping("/post/{postId}/comments")
     public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable("postId") long postId) {
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
@@ -33,8 +27,14 @@ public class CommentController {
         return ResponseEntity.ok(commentService.findCommentByPostIdAndCommentId(postId, commentId));
     }
 
+    @PostMapping("/post/{postId}/comments")
+    public ResponseEntity<CommentDto> createComment(@PathVariable("postId") long postId, @Valid @RequestBody CommentDto commentDto) {
+        return new ResponseEntity<>(commentService.createComment(postId, commentDto), HttpStatus.CREATED);
+    }
+
+
     @PutMapping("/post/{postId}/comments/{commentId}")
-    public ResponseEntity<CommentDto> updateComment(@PathVariable("postId") long postId, @PathVariable("commentId") long commentId, @RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentDto> updateComment(@PathVariable("postId") long postId, @PathVariable("commentId") long commentId, @Valid @RequestBody CommentDto commentDto) {
         return ResponseEntity.ok(commentService.updateComment(postId, commentId, commentDto));
     }
 
