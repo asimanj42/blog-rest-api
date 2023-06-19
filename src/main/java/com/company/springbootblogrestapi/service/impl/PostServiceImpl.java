@@ -6,7 +6,8 @@ import com.company.springbootblogrestapi.exception.ResourceNotFoundException;
 import com.company.springbootblogrestapi.payload.PostResponse;
 import com.company.springbootblogrestapi.repository.PostRepository;
 import com.company.springbootblogrestapi.service.PostService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,16 +17,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public PostDto createPost(PostDto postDto) {
-        Post post = mapToEntity(postDto);
+        Post post = mapToPostEntity(postDto);
         Post newPost = postRepository.save(post);
-        return mapToDto(newPost);
+        return mapToPostDto(newPost);
     }
 
     @Override
@@ -36,7 +38,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Post> posts = postRepository.findAll(pageable);
         List<Post> listOfPost = posts.getContent();
-        List<PostDto> content = listOfPost.stream().map(this::mapToDto).toList();
+        List<PostDto> content = listOfPost.stream().map(this::mapToPostDto).toList();
         PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(posts.getNumber());
@@ -50,7 +52,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto getPostById(long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-        return mapToDto(post);
+        return mapToPostDto(post);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class PostServiceImpl implements PostService {
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
         Post updatedPost = postRepository.save(post);
-        return mapToDto(updatedPost);
+        return mapToPostDto(updatedPost);
     }
 
     @Override
@@ -68,22 +70,10 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
     }
-
-    private PostDto mapToDto(Post post) {
-        PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
-        postDto.setTitle(post.getTitle());
-        postDto.setDescription(post.getDescription());
-        postDto.setContent(post.getContent());
-        return postDto;
+    private PostDto mapToPostDto(Post post) {
+        return modelMapper.map(post, PostDto.class);
     }
-
-    private Post mapToEntity(PostDto postDto) {
-        Post post = new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
-        return post;
+    private Post mapToPostEntity(PostDto postDto) {
+        return modelMapper.map(postDto, Post.class);
     }
-
 }
