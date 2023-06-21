@@ -2,7 +2,7 @@ package com.company.springbootblogrestapi.service.impl;
 
 import com.company.springbootblogrestapi.entity.Comment;
 import com.company.springbootblogrestapi.entity.Post;
-import com.company.springbootblogrestapi.exception.NotBelongException;
+import com.company.springbootblogrestapi.exception.ApiException;
 import com.company.springbootblogrestapi.exception.ResourceNotFoundException;
 import com.company.springbootblogrestapi.mapper.CommentMapper;
 import com.company.springbootblogrestapi.payload.CommentDto;
@@ -43,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
         if (!comment.getPost().getId().equals(post.getId())) {
-            throw new NotBelongException(HttpStatus.BAD_REQUEST, "This comment doesn't belong to post");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "This comment doesn't belong to post");
         }
         return commentMapper.mapToCommentDto(comment);
     }
@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
         if (!comment.getPost().getId().equals(post.getId())) {
-            throw new NotBelongException(HttpStatus.BAD_REQUEST, "This comment doesn't belong to post");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "This comment doesn't belong to post");
         }
         comment.setName(commentDto.getName());
         comment.setEmail(commentDto.getEmail());
@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
         if (!comment.getPost().getId().equals(post.getId())) {
-            throw new NotBelongException(HttpStatus.BAD_REQUEST, "This comment doesn't belong to post");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "This comment doesn't belong to post");
         }
         commentRepository.delete(comment);
     }

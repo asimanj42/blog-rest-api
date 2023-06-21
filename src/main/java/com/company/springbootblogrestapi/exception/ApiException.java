@@ -2,16 +2,16 @@ package com.company.springbootblogrestapi.exception;
 
 import org.springframework.http.HttpStatus;
 
-public class NotBelongException extends RuntimeException {
+public class ApiException extends RuntimeException {
     private HttpStatus httpStatus;
     private String message;
 
-    public NotBelongException(HttpStatus httpStatus, String message) {
+    public ApiException(HttpStatus httpStatus, String message) {
         this.httpStatus = httpStatus;
         this.message = message;
     }
 
-    public NotBelongException(String message, HttpStatus httpStatus, String theMessage) {
+    public ApiException(String message, HttpStatus httpStatus, String theMessage) {
         super(message);
         this.httpStatus = httpStatus;
         this.message = theMessage;
