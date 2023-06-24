@@ -7,6 +7,7 @@ import com.company.springbootblogrestapi.payload.LoginDto;
 import com.company.springbootblogrestapi.payload.RegisterDto;
 import com.company.springbootblogrestapi.repository.RoleRepository;
 import com.company.springbootblogrestapi.repository.UserRepository;
+import com.company.springbootblogrestapi.security.JwtTokenProvider;
 import com.company.springbootblogrestapi.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,12 +29,13 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String login(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "User logged in";
+        return jwtTokenProvider.generateToken(authentication);
     }
 
     @Override

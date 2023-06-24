@@ -9,8 +9,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -33,6 +34,12 @@ public class PostController {
     public ResponseEntity<PostDto> getPostById(@PathVariable("id") long id) {
         return ResponseEntity.ok(postService.getPostById(id));
     }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<PostDto>> getPostsByCategoryId(@PathVariable("categoryId") long categoryId) {
+        return ResponseEntity.ok(postService.getPostsByCategoryId(categoryId));
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
