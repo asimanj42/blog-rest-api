@@ -4,6 +4,7 @@ import com.company.springbootblogrestapi.payload.PostDto;
 import com.company.springbootblogrestapi.payload.PostResponse;
 import com.company.springbootblogrestapi.service.PostService;
 import com.company.springbootblogrestapi.utils.Constants;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/posts")
 @AllArgsConstructor
-public class PostController {
+ public class PostController {
 
     private final PostService postService;
 
@@ -40,13 +41,15 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByCategoryId(categoryId));
     }
 
-
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
+
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto, @PathVariable("id") long id) {
@@ -54,6 +57,7 @@ public class PostController {
         return new ResponseEntity<>(updatedPost, HttpStatus.OK);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable("id") long id) {
